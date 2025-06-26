@@ -1,6 +1,6 @@
 const Store = require('../Models/Store');
 
-// Add new store (POST /api/stores)
+// Add new store  
 exports.addStore = async (req, res) => {
     const { name, latitude, longitude } = req.body;
     const store = new Store({ name, latitude, longitude });
@@ -10,7 +10,7 @@ exports.addStore = async (req, res) => {
 
 
 
-// Get nearest store (POST /api/stores/nearest)
+// Get nearest store  
 exports.findNearestStore = async (req, res) => {
     const { latitude, longitude } = req.body;
     const stores = await Store.find();
