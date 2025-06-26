@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import './index.css';
 
 function App() {
   const [latitude, setLatitude] = useState('');
@@ -8,55 +8,101 @@ function App() {
 
   const findNearest = async () => {
     try {
-      const res = await axios.post('http://localhost:5000/api/stores/nearest', {
-        latitude: parseFloat(latitude),
-        longitude: parseFloat(longitude),
+      const res = await fetch('http://localhost:5000/api/stores/nearest', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          latitude: parseFloat(latitude),
+          longitude: parseFloat(longitude),
+        }),
       });
-      setStore(res.data);
+
+      const data = await res.json();
+      setStore(data);
     } catch (error) {
       console.error('Error fetching store:', error);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-300">
-      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
-        <h1 className="text-3xl font-semibold text-center mb-6 text-blue-700">
-          LG Gas Store Locator
-        </h1>
+    <div className="container">
+      <div className="card">
+        {/* Header */}
+        <div className="header">
+          <div className="icon-container">
+            <span className="icon">📍</span>
+          </div>
+          <h1 className="title">
+            LG Gas Store Locator
+          </h1>
+          <p className="subtitle">Find your nearest gas station</p>
+        </div>
 
-        <div className="space-y-4">
-          <input
-            type="text"
-            placeholder="Enter Latitude"
-            value={latitude}
-            onChange={(e) => setLatitude(e.target.value)}
-            className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-          <input
-            type="text"
-            placeholder="Enter Longitude"
-            value={longitude}
-            onChange={(e) => setLongitude(e.target.value)}
-            className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
+        {/* Form */}
+        <div className="form">
+          <div className="form-group">
+            <label className="label">
+              Latitude
+            </label>
+            <input
+              type="text"
+              placeholder="Enter latitude"
+              value={latitude}
+              onChange={(e) => setLatitude(e.target.value)}
+              className="input"
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="label">
+              Longitude
+            </label>
+            <input
+              type="text"
+              placeholder="Enter longitude"
+              value={longitude}
+              onChange={(e) => setLongitude(e.target.value)}
+              className="input"
+            />
+          </div>
 
           <button
             onClick={findNearest}
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-200"
+            className="button"
           >
+            <span className="button-icon">🔍</span>
             Find Nearest Store
           </button>
         </div>
 
+        {/* Results */}
         {store && (
-          <div className="mt-6 bg-blue-50 p-4 rounded border border-blue-200">
-            <h2 className="text-xl font-semibold text-blue-700 mb-2">
-              Nearest Store Found:
-            </h2>
-            <p><strong>Name:</strong> {store.name}</p>
-            <p><strong>Latitude:</strong> {store.latitude}</p>
-            <p><strong>Longitude:</strong> {store.longitude}</p>
+          <div className="results">
+            <div className="results-header">
+              <div className="results-icon-container">
+                <span className="results-icon">✓</span>
+              </div>
+              <h2 className="results-title">
+                Store Found
+              </h2>
+            </div>
+
+            <div className="results-content">
+              <div className="results-item">
+                <span className="results-label">Name: </span>
+                <span className="results-value">{store.name}</span>
+              </div>
+              <div className="results-item">
+                <span className="results-label">Latitude: </span>
+                <span className="results-value">{store.latitude}</span>
+              </div>
+              <div className="results-item">
+                <span className="results-label">Longitude: </span>
+                <span className="results-value">{store.longitude}</span>
+              </div>
+            </div>
           </div>
         )}
       </div>
